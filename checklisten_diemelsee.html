@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+<title>Herrenausflug Diemelsee — Checklisten</title>
+<style>
+  :root{
+    --forest: #2f3e33;
+    --forest-deep: #1d2620;
+    --moss: #5c7a5e;
+    --bg: #f3ede1;
+    --bg-alt: #e8dfc9;
+    --clay: #a2542f;
+    --ink: #2a241c;
+    --line: #d8ccae;
+    --ok: #4c7a4f;
+    --cream: #f3ede1;
+    --sub-color: #55503f;
+    --meta-color: #5f5847;
+    --nav-color: #4a4436;
+    --tag-color: #4a4436;
+    --muted: #a49c8b;
+    --card-bg: #fffdf8;
+    --notice-bg: #fbe9dd;
+    --heading-color: #1d2620;
+    --group-label: #5c7a5e;
+    --status-open-bg: #f4dfc7;
+    --status-open-color: #8a5a1f;
+    --status-done-bg: #dcead9;
+    --status-done-color: #4c7a4f;
+    color-scheme: light dark;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg: #1f1b15;
+      --bg-alt: #2a251d;
+      --ink: #ece3d0;
+      --line: #4a4436;
+      --ok: #6fae72;
+      --sub-color: #c9bfa8;
+      --meta-color: #b8ad92;
+      --nav-color: #c9bfa8;
+      --tag-color: #d8ccae;
+      --muted: #8d8368;
+      --card-bg: #241f18;
+      --notice-bg: #3a2a1f;
+      --heading-color: #9fd6a1;
+      --group-label: #8fbf91;
+      --status-open-bg: #4a3620;
+      --status-open-color: #e8b783;
+      --status-done-bg: #23361f;
+      --status-done-color: #8fd18f;
+    }
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family: 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+    background: var(--bg);
+    color: var(--ink);
+  }
+  header{
+    background: linear-gradient(160deg, var(--forest) 0%, var(--forest-deep) 100%);
+    color: var(--cream);
+    padding: 28px 24px 20px;
+  }
+  header h1{
+    margin:0 0 4px;
+    font-size: 1.6rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+  header p{
+    margin:0;
+    font-size: 0.92rem;
+    color: #cfd9cf;
+  }
+  nav{
+    display:flex;
+    overflow-x:auto;
+    background: var(--bg-alt);
+    border-bottom: 1px solid var(--line);
+    position: sticky;
+    top:0;
+    z-index: 10;
+  }
+  nav button{
+    flex: 0 0 auto;
+    background: none;
+    border: none;
+    padding: 14px 18px;
+    font-family: inherit;
+    font-size: 0.92rem;
+    color: var(--nav-color);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    white-space: nowrap;
+  }
+  nav button.active{
+    color: var(--ink);
+    border-bottom-color: var(--clay);
+    font-weight: 600;
+  }
+  main{
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 22px 20px 60px;
+  }
+  section{ display:none; }
+  section.active{ display:block; }
+  h2{
+    font-size: 1.15rem;
+    margin: 0 0 4px;
+    color: var(--heading-color);
+  }
+  .sub{
+    font-size: 0.85rem;
+    color: var(--sub-color);
+    margin: 0 0 18px;
+  }
+  .notice{
+    background: var(--notice-bg);
+    border-left: 4px solid var(--clay);
+    padding: 12px 14px;
+    font-size: 0.88rem;
+    border-radius: 3px;
+    margin-bottom: 18px;
+    color: var(--ink);
+  }
+  .group{
+    margin-bottom: 22px;
+  }
+  .group h3{
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--group-label);
+    margin: 0 0 8px;
+    font-weight: 600;
+  }
+  .item{
+    display:flex;
+    align-items:flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 0.95rem;
+  }
+  .item:last-child{ border-bottom:none; }
+  .item input[type=checkbox]{
+    margin-top: 3px;
+    width: 17px;
+    height: 17px;
+    accent-color: var(--ok);
+    flex-shrink:0;
+  }
+  .item label{ flex:1; cursor:pointer; }
+  .item.checked label{
+    text-decoration: line-through;
+    color: var(--muted);
+  }
+  .item .meta{
+    display:block;
+    font-size: 0.78rem;
+    color: var(--meta-color);
+    margin-top: 2px;
+  }
+  .route{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap: 6px;
+    font-size: 0.95rem;
+    margin: 10px 0 4px;
+  }
+  .route .stop{
+    background: var(--forest);
+    color: var(--cream);
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+  }
+  .route .stop.start{ background: var(--clay); }
+  .route .arrow{ color: var(--muted); }
+  .card{
+    background: var(--card-bg);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+  }
+  .card h3{ margin: 0 0 4px; font-size: 1rem; color: var(--ink); }
+  .card .tag{
+    display:inline-block;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background: var(--bg-alt);
+    color: var(--tag-color);
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-right: 6px;
+    margin-top: 4px;
+  }
+  .card p{ margin: 6px 0 0; font-size: 0.9rem; color: var(--sub-color); }
+  .card a{ color: var(--clay); }
+  .timeline{
+    position: relative;
+    margin-left: 6px;
+    padding-left: 22px;
+    border-left: 2px solid var(--line);
+  }
+  .tl-item{
+    position: relative;
+    padding-bottom: 20px;
+  }
+  .tl-item:last-child{ padding-bottom:0; }
+  .tl-item::before{
+    content:'';
+    position:absolute;
+    left: -28px;
+    top: 3px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--clay);
+    border: 2px solid var(--bg);
+    box-shadow: 0 0 0 2px var(--clay);
+  }
+  .tl-time{
+    font-weight: 600;
+    color: var(--heading-color);
+    font-size: 0.95rem;
+  }
+  .tl-desc{ font-size: 0.9rem; color: var(--sub-color); margin-top: 2px; }
+  .open-note{
+    font-style: italic;
+    color: var(--sub-color);
+    font-size: 0.88rem;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--line);
+  }
+  .status{
+    font-size: 0.78rem;
+    padding: 3px 9px;
+    border-radius: 10px;
+    font-weight:600;
+  }
+  .status.open{ background:var(--status-open-bg); color:var(--status-open-color); }
+  .status.done{ background:var(--status-done-bg); color:var(--status-done-color); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Herrenausflug — Diemelsee 2026</h1>
+  <p>2.–4. Oktober 2026 · Heringhausen (Waldecker Land) · Bogenparcours Brilon</p>
+</header>
+
+<nav id="tabs">
+  <button data-tab="planung" class="active">Planung</button>
+  <button data-tab="mitnahme">Mitnahmeliste</button>
+  <button data-tab="einkauf">Einkaufsliste</button>
+  <button data-tab="restaurants">Restaurants</button>
+  <button data-tab="tagesplan">Tagesplan Sa</button>
+</nav>
+
+<main>
+
+  <!-- PLANUNG -->
+  <section id="planung" class="active">
+    <h2>Planungscheckliste</h2>
+    <p class="sub">Offene Punkte und Entscheidungen</p>
+
+    <div class="notice">
+      <strong>Feiertag beachten:</strong> Samstag, 3. Oktober ist Tag der Deutschen Einheit — alle Geschäfte geschlossen. Einkäufe müssen bis spätestens Freitag erledigt sein.
+    </div>
+
+    <div class="group">
+      <h3>Fahrzeug & Abholung</h3>
+      <div class="card">
+        <h3>Fahrzeug: VW Bus <span class="status done">geklärt</span></h3>
+        <p>Ein Fahrzeug für alle fünf Personen. Abfahrt Freitag, <strong>15:00 Uhr</strong> in Silbitz.</p>
+        <div class="route">
+          <span class="stop start">Silbitz (Start, 15:00 Uhr)</span>
+          <span class="arrow">→</span>
+          <span class="stop">Caaschwitz</span>
+          <span class="arrow">→</span>
+          <span class="stop">Roben</span>
+          <span class="arrow">→</span>
+          <span class="stop">Gera</span>
+          <span class="arrow">→</span>
+          <span class="stop">Unterkunft Heringhausen</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="group">
+      <h3>Noch offen</h3>
+      <div class="item" data-key="plan-1">
+        <input type="checkbox" id="plan-1">
+        <label for="plan-1">Freitagabend festlegen: Grillen/Kochen im Ferienhaus oder Hofbrauhaus Arolsen
+          <span class="meta">Arolsen ~20 Min. entfernt, aber ~25–30 Min. Umweg auf der Rückfahrt von Brilon am Samstag</span>
+        </label>
+      </div>
+      <div class="item" data-key="plan-2">
+        <input type="checkbox" id="plan-2">
+        <label for="plan-2">Check-in-Ablauf im Ferienhaus klären (Schlüsselübergabe, Zeiten)
+          <span class="meta">Haus in dritter Reihe der Ferienanlage, Baujahr 2021</span>
+        </label>
+      </div>
+      <div class="item" data-key="plan-4">
+        <input type="checkbox" id="plan-4">
+        <label for="plan-4">Öffnungszeiten Bogenparcours Brilon am Feiertag bestätigen + Anmeldung für die Gruppe
+          <span class="meta">Nur Barzahlung, 14 € pro Erwachsenem</span>
+        </label>
+      </div>
+      <div class="item" data-key="plan-6">
+        <input type="checkbox" id="plan-6">
+        <label for="plan-6">Verkehrslage Freitag im Blick behalten
+          <span class="meta">Brückentag/Feiertagswochenende — voraussichtlich mehr Verkehr als üblich; bei Abfahrt 15:00 Uhr und Fahrzeit ca. 2:45–3:15 Std. Ankunft ca. 17:45–18:15 Uhr in Heringhausen</span>
+        </label>
+      </div>
+    </div>
+
+    <p class="open-note">Häkchen werden für dich gespeichert, sobald du diese Datei über einen Browser mit Speicherzugriff öffnest (z. B. als hochgeladenes Artefakt).</p>
+  </section>
+
+  <!-- MITNAHMELISTE -->
+  <section id="mitnahme">
+    <h2>Mitnahmeliste</h2>
+    <p class="sub">Was jeder dabeihaben sollte</p>
+
+    <div class="group">
+      <h3>Bogensport</h3>
+      <div class="item" data-key="mit-1"><input type="checkbox" id="mit-1"><label for="mit-1">Eigener Bogen inkl. Zubehör</label></div>
+      <div class="item" data-key="mit-2"><input type="checkbox" id="mit-2"><label for="mit-2">Pfeile (ausreichend Ersatz einplanen)</label></div>
+      <div class="item" data-key="mit-3"><input type="checkbox" id="mit-3"><label for="mit-3">Armschutz / Fingerschutz</label></div>
+      <div class="item" data-key="mit-4"><input type="checkbox" id="mit-4"><label for="mit-4">Köcher</label></div>
+      <div class="item" data-key="mit-5"><input type="checkbox" id="mit-5"><label for="mit-5">Bargeld für den Parcours (14 €/Person, nur Cash)</label></div>
+      <div class="item" data-key="mit-5b"><input type="checkbox" id="mit-5b"><label for="mit-5b">Bargeld für Tourismusbeitrag (6 €, nur Cash)</label></div>
+    </div>
+
+    <div class="group">
+      <h3>Kleidung</h3>
+      <div class="item" data-key="mit-6"><input type="checkbox" id="mit-6"><label for="mit-6">Wetterfeste Jacke</label></div>
+      <div class="item" data-key="mit-7"><input type="checkbox" id="mit-7"><label for="mit-7">Feste Schuhe für den Waldparcours</label></div>
+      <div class="item" data-key="mit-8"><input type="checkbox" id="mit-8"><label for="mit-8">Wechselkleidung</label></div>
+      <div class="item" data-key="mit-9"><input type="checkbox" id="mit-9"><label for="mit-9">Mütze/Handschuhe (Oktober, morgens kühl)</label></div>
+    </div>
+
+    <div class="group">
+      <h3>Ferienhaus</h3>
+      <div class="item" data-key="mit-11"><input type="checkbox" id="mit-11"><label for="mit-11">Hausschuhe</label></div>
+    </div>
+
+    <div class="group">
+      <h3>Sonstiges</h3>
+      <div class="item" data-key="mit-12"><input type="checkbox" id="mit-12"><label for="mit-12">Ladekabel/Powerbank</label></div>
+      <div class="item" data-key="mit-13"><input type="checkbox" id="mit-13"><label for="mit-13">Erste-Hilfe-Set</label></div>
+      <div class="item" data-key="mit-14"><input type="checkbox" id="mit-14"><label for="mit-14">Getränke/Snacks für die Fahrt</label></div>
+    </div>
+  </section>
+
+  <!-- EINKAUFSLISTE -->
+  <section id="einkauf">
+    <h2>Einkaufsliste</h2>
+    <p class="sub">Bis Freitag erledigen — Samstag ist Feiertag, alles geschlossen</p>
+
+    <div class="group">
+      <h3>Frühstück (2× für 5 Personen)</h3>
+      <div class="item" data-key="eink-1"><input type="checkbox" id="eink-1"><label for="eink-1">Brötchen — 20 Stück (10 pro Frühstück)</label></div>
+      <div class="item" data-key="eink-2"><input type="checkbox" id="eink-2"><label for="eink-2">Butter — 250 g</label></div>
+      <div class="item" data-key="eink-3"><input type="checkbox" id="eink-3"><label for="eink-3">Aufschnitt (Wurst) — ca. 500 g</label></div>
+      <div class="item" data-key="eink-4"><input type="checkbox" id="eink-4"><label for="eink-4">Käse — ca. 400 g</label></div>
+      <div class="item" data-key="eink-5"><input type="checkbox" id="eink-5"><label for="eink-5">Marmelade/Honig — 1–2 Gläser</label></div>
+      <div class="item" data-key="eink-6"><input type="checkbox" id="eink-6"><label for="eink-6">Eier — 10 Stück (falls gewünscht, z. B. Rührei)</label></div>
+      <div class="item" data-key="eink-7"><input type="checkbox" id="eink-7"><label for="eink-7">Milch — 1 l</label></div>
+      <div class="item" data-key="eink-8"><input type="checkbox" id="eink-8"><label for="eink-8">Kaffee (gemahlen) — 500 g + Kaffeesahne</label></div>
+      <div class="item" data-key="eink-9"><input type="checkbox" id="eink-9"><label for="eink-9">Tee — 1 Packung</label></div>
+      <div class="item" data-key="eink-11"><input type="checkbox" id="eink-11"><label for="eink-11">Zucker — 1 kleine Packung</label></div>
+    </div>
+
+    <div class="group">
+      <h3>Notfall-Abendessen: Nudeln mit Pesto</h3>
+      <div class="item" data-key="eink-12"><input type="checkbox" id="eink-12"><label for="eink-12">Nudeln — 1,5 kg (z. B. Penne oder Fusilli)</label></div>
+      <div class="item" data-key="eink-13"><input type="checkbox" id="eink-13"><label for="eink-13">Pesto — 3 Gläser (Rosso/Verde nach Geschmack)</label></div>
+      <div class="item" data-key="eink-14"><input type="checkbox" id="eink-14"><label for="eink-14">Parmesan/Reibekäse — 1 Packung (optional)</label></div>
+      <div class="item" data-key="eink-15"><input type="checkbox" id="eink-15"><label for="eink-15">Olivenöl — falls im Haus nicht vorhanden</label></div>
+    </div>
+
+    <div class="group">
+      <h3>Getränke</h3>
+      <div class="item" data-key="eink-20"><input type="checkbox" id="eink-20"><label for="eink-20">Regionales Bier (Hütt, Warsteiner, Veltins, Krombacher)</label></div>
+      <div class="item" data-key="eink-21"><input type="checkbox" id="eink-21"><label for="eink-21">Wasser/alkoholfreie Getränke</label></div>
+      <div class="item" data-key="eink-22"><input type="checkbox" id="eink-22"><label for="eink-22">Kaffee für den Vorrat</label></div>
+    </div>
+
+    <div class="group">
+      <h3>Sonstiges</h3>
+      <div class="item" data-key="eink-23"><input type="checkbox" id="eink-23"><label for="eink-23">Snacks für den Parcours-Tag</label></div>
+      <div class="item" data-key="eink-24"><input type="checkbox" id="eink-24"><label for="eink-24">Spülmittel/Küchenrolle</label></div>
+      <div class="item" data-key="eink-25"><input type="checkbox" id="eink-25"><label for="eink-25">Müllbeutel</label></div>
+    </div>
+  </section>
+
+  <!-- RESTAURANTS -->
+  <section id="restaurants">
+    <h2>Restaurants & Regionales</h2>
+    <p class="sub">Optionen rund um Heringhausen und Brilon</p>
+
+    <div class="card">
+      <h3>Hofbrauhaus Arolsen</h3>
+      <span class="tag">Freitagabend-Option</span>
+      <span class="tag">~20 Min. von der Unterkunft</span>
+      <p>Traditionelle Brauereigaststätte mit eigenem Bier. Auf der Rückfahrt von Brilon am Samstag bedeutet der Halt dort einen Umweg von ca. 25–30 Minuten — daher eher als eigenständiger Freitagabend-Ausflug geeignet, nicht als Stopp auf der Heimfahrt.</p>
+    </div>
+
+    <p class="sub" style="margin-top:-8px;">Restaurant-Optionen in der Nähe (Entfernung/Zeit ab Unterkunft Heringhausen)</p>
+
+    <div class="card">
+      <h3>Strand Imbiss <span class="status open">3,1 ★ (173)</span></h3>
+      <span class="tag">~150 m · 2 Min. zu Fuß</span>
+      <span class="tag">Imbiss · €</span>
+      <p>Snackbar direkt am See: Pizza, Döner/Gyros, Pommes. Selbstbedienung, schöne Terrassenlage — Bewertungen zum Essen sind aber durchwachsen.<br>Kirchstraße 12, 34519 Diemelsee</p>
+    </div>
+
+    <div class="card">
+      <h3>Gaststätte Seeblick <span class="status done">4,6 ★ (993)</span></h3>
+      <span class="tag">~150 m · 2 Min. zu Fuß</span>
+      <span class="tag">Gutbürgerlich · €€</span>
+      <p>Deutsche/regionale Küche, sehr freundlich und gut bewertet. Ruhetag Di/Mi, sonst abends bzw. am Wochenende auch mittags geöffnet.<br>Auf dem Kampe 3, 34519 Diemelsee-Heringhausen · Tel. 05633 5261</p>
+    </div>
+
+    <div class="card">
+      <h3>Pizza Venezia <span class="status done">4,5 ★ (30)</span></h3>
+      <span class="tag">~300 m · 4 Min. zu Fuß</span>
+      <span class="tag">Pizzeria · €€</span>
+      <p>Klassische Pizzeria mit Bergblick, freundlicher Service. Di–So ab 12 Uhr, Montag Ruhetag.<br>Seestraße 28, 34519 Diemelsee-Heringhausen</p>
+    </div>
+
+    <div class="card">
+      <h3>Diemelsteighütte <span class="status done">4,7 ★ (371)</span></h3>
+      <span class="tag">~500 m · 6 Min. zu Fuß</span>
+      <span class="tag">Kneipe/Biergarten · €€</span>
+      <p>Deftige Hausmannskost (Bratwurst etc.), lokales Bier/Apfelwein, direkt neben der Minigolfanlage. Ruhetag Mo/Do.<br>Siekesweg 1, 34519 Diemelsee-Heringhausen · Tel. 05633 8499965</p>
+    </div>
+
+    <div class="card">
+      <h3>Fährhaus (am See, Marsberg) <span class="status done">4,2 ★ (1.713)</span></h3>
+      <span class="tag">~1,2 km · ca. 5 Min. mit dem Auto</span>
+      <span class="tag">Café/Biker-Treff · €€</span>
+      <p>Legere Küche (BBQ-Snacks, Flammkuchen, Kuchen), Seeblick, bei Motorradfahrern beliebt. Täglich 11–20 Uhr.<br>a. See 20, 34431 Marsberg</p>
+    </div>
+
+    <div class="card">
+      <h3>Landgasthaus Hofmeister (Adorf) <span class="status done">4,7 ★ (334)</span></h3>
+      <span class="tag">~5,2 km · ca. 8 Min. mit dem Auto</span>
+      <span class="tag">Landgasthaus · €–€€</span>
+      <p>Deutsche Küche, laut Bewertungen sehr angemessen bepreist, auch vegetarische Optionen. Mi–So 12–19 Uhr, Mo/Di Ruhetag.<br>Rhenegger Str. 6, 34519 Diemelsee-Adorf · Tel. 05633 9930110</p>
+    </div>
+
+    <div class="card">
+      <h3>Pizza Amuda (Adorf) <span class="status done">4,4 ★ (299)</span></h3>
+      <span class="tag">~5,3 km · ca. 8 Min. mit dem Auto</span>
+      <span class="tag">Pizzeria/Döner · €€</span>
+      <p>Pizza und Döner Kebab, gutes Preis-Leistungs-Verhältnis. Di–So, Montag Ruhetag.<br>Rhenegger Str. 3, 34519 Diemelsee-Adorf · Tel. 05633 993915</p>
+    </div>
+
+    <div class="card">
+      <h3>Gasthof "Zur Linde" (Diemelsee) <span class="status done">4,3 ★ (248)</span></h3>
+      <span class="tag">~5,4 km · ca. 8 Min. mit dem Auto</span>
+      <span class="tag">Landgasthof · €€</span>
+      <p>Deftige deutsche Küche, laut Bewertungen ein "gutes Schnitzel für den echten deutschen Fleisch-Genuss".<br>Bredelarer Str. 14, 34519 Diemelsee · Tel. 05633 233</p>
+    </div>
+
+    <div class="group">
+      <h3>Regionale Spezialitäten (zum Probieren)</h3>
+      <div class="item"><input type="checkbox" disabled><label>Schepperlinge</label></div>
+      <div class="item"><input type="checkbox" disabled><label>Waldecker Krüstchen</label></div>
+      <div class="item"><input type="checkbox" disabled><label>Grüne Soße</label></div>
+    </div>
+
+    <div class="group">
+      <h3>Regionale Biere</h3>
+      <div class="item"><input type="checkbox" disabled><label>Hofbrauhaus Arolsen</label></div>
+      <div class="item"><input type="checkbox" disabled><label>Hütt Bier</label></div>
+      <div class="item"><input type="checkbox" disabled><label>Warsteiner</label></div>
+      <div class="item"><input type="checkbox" disabled><label>Veltins</label></div>
+      <div class="item"><input type="checkbox" disabled><label>Krombacher</label></div>
+    </div>
+
+    <p class="open-note">Weitere Restaurant-Optionen für Samstagabend sind noch offen — je nachdem, wie der Parcours-Tag verläuft.</p>
+  </section>
+
+  <!-- TAGESPLAN SAMSTAG -->
+  <section id="tagesplan">
+    <h2>Tagesplan Samstag, 3. Oktober</h2>
+    <p class="sub">Bogenparcours Brilon</p>
+
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-time">07:00 Uhr</div>
+        <div class="tl-desc">Aufstehen</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-time">07:00–08:00 Uhr</div>
+        <div class="tl-desc">Frühstück in der Unterkunft</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-time">08:00 Uhr</div>
+        <div class="tl-desc">Abfahrt Richtung Brilon</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-time">08:25–08:30 Uhr</div>
+        <div class="tl-desc">Ankunft & Anmeldung am Bogenparcours (Bargeld nicht vergessen)</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-time">08:30–09:00 Uhr</div>
+        <div class="tl-desc">Start des Parcours</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-time">danach</div>
+        <div class="tl-desc">Nachmittag & Abend bewusst offen — je nach Lust ggf. mehrere Parcours-Runden</div>
+      </div>
+    </div>
+
+    <p class="open-note">Rückfahrtzeit und Abendplanung hängen davon ab, wie viele Runden die Gruppe drehen möchte.</p>
+  </section>
+
+</main>
+
+<script>
+  // Tab-Navigation
+  const buttons = document.querySelectorAll('nav#tabs button');
+  const sections = document.querySelectorAll('main > section');
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => b.classList.remove('active'));
+      sections.forEach(s => s.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  // Checkbox-Status: visuelles Durchstreichen + Persistenz via window.storage (falls verfügbar)
+  const items = document.querySelectorAll('.item[data-key] input[type=checkbox]');
+
+  async function loadState(){
+    if (!window.storage) return;
+    for (const cb of items){
+      const key = 'diemelsee:' + cb.closest('.item').dataset.key;
+      try{
+        const res = await window.storage.get(key);
+        if (res && res.value === 'true'){
+          cb.checked = true;
+          cb.closest('.item').classList.add('checked');
+        }
+      }catch(e){ /* key not set yet */ }
+    }
+  }
+
+  items.forEach(cb => {
+    cb.addEventListener('change', async () => {
+      const item = cb.closest('.item');
+      item.classList.toggle('checked', cb.checked);
+      if (window.storage){
+        const key = 'diemelsee:' + item.dataset.key;
+        try{ await window.storage.set(key, String(cb.checked)); }catch(e){}
+      }
+    });
+  });
+
+  loadState();
+</script>
+
+</body>
+</html>
